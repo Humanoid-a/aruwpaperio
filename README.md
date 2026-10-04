@@ -36,7 +36,7 @@ package manager.
 ### 2. Clone the repository
 
 ```
-git clone https://github.com/shouryamundra/python-state-machine-starter.git
+git clone https://gitlab.com/aruw/vision/applications/python-state-machine-starter.git
 cd python-state-machine-starter
 ```
 
