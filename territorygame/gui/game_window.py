@@ -220,8 +220,9 @@ class GameWindow:
         pygame.init()
         pygame.display.set_caption("Territory Capture")
         self._config = config
-        self._font = pygame.font.SysFont(None, 20)
-        self._bold_font = pygame.font.SysFont(None, 22, bold=True)
+        self._font = pygame.font.Font(None, 20)
+        self._bold_font = pygame.font.Font(None, 22)
+        self._bold_font.set_bold(True)
 
         board_pixels = min(_MAX_BOARD_PIXELS, 16 * max(config.board_width, config.board_height))
         width = board_pixels + _SIDE_PANEL_WIDTH
