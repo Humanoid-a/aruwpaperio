@@ -1,13 +1,12 @@
 """The one-move predictor against the framework's real rules."""
 
-import pytest
 
 from candidate.agent import adapter
 from candidate.agent.data.types import Direction, MoveResult, Side
 from candidate.agent.geometry.grid import flat
 from candidate.agent.prediction import predict_move
 from candidate.agent.rules.match import MatchRules
-from candidate.tests.builders import put_territory, put_trail
+from candidate.tests.builders import put_trail
 from candidate.tests.live import LiveGame
 from candidate.tests.rules_oracle import real_apply
 from candidate.tests.test_reference_rules import RULES, loop_world

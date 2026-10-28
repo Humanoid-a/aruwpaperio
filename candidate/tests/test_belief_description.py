@@ -9,7 +9,7 @@ from candidate.agent.probe import ProbePolicy
 from candidate.candidate_controller import CandidateController
 from candidate.runtime_check import run_check
 from candidate.tests.live import LiveGame
-from candidate.tests.test_belief_display import FAR, Scripted, run_turns
+from candidate.tests.test_belief_display import FAR, run_turns
 
 
 def state_lines(echoed):

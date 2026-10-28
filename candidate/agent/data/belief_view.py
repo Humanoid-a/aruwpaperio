@@ -46,7 +46,7 @@ class BeliefSummary:
 @dataclass(frozen=True, eq=False)
 class BeliefDetail:
     """The whole belief as plain arrays, for consumers that need more than the position marginal (the Q
-    model's confidence map). Hypotheses carry their lands as an index into a small table of distinct lands,
+    model's probability map). Hypotheses carry their lands as an index into a small table of distinct lands,
     because many hypotheses share one."""
 
     weight: np.ndarray            # (n,) float64: probability mass of each hypothesis

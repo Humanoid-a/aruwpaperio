@@ -49,15 +49,49 @@ def dilate(bb: np.ndarray, passable: np.ndarray | None = None) -> np.ndarray:
     return g
 
 
+_SPANS = (1, 2, 4, 8, 16, 32)       # 1 + 2 + ... + 32 = 63 >= 49: any run inside a row
+
+
+def _grow(cur: np.ndarray, passable: np.ndarray) -> np.ndarray:
+    """One round of flood: `cur` (inside `passable`) run along its rows to the ends of their passable runs, then one
+    step up and down. Towards higher bits, adding the seeds to the passable runs carries through each run; towards
+    lower bits it is an occluded fill (Kogge-Stone): log2(50) shifts instead of one per cell. `passable` has no bits
+    above 49, so nothing spills past a row's end."""
+    g = cur | (((passable + cur) ^ passable) & passable)
+    p = passable
+    for k in _SPANS:
+        g |= p & (g >> k)
+        p = p & (p >> k)
+    g[..., 1:] |= g[..., :-1] & passable[..., 1:]
+    g[..., :-1] |= g[..., 1:] & passable[..., :-1]
+    return g
+
+
 def flood(seed: np.ndarray, passable: np.ndarray) -> np.ndarray:
     """Every cell of `passable` connected to a seed cell through passable
-    cells. Seed cells outside `passable` are ignored."""
+    cells. Seed cells outside `passable` are ignored. A round runs along whole
+    rows, so the rounds needed are about the rows a path crosses, not its
+    length; in a batch, a board drops out of the rounds once it stops growing."""
+    shape = np.broadcast_shapes(seed.shape, passable.shape)          # a single board may go with a batch, as before
+    passable = np.broadcast_to(passable & ROW_MASK, shape)
     cur = seed & passable
-    while True:
-        grown = dilate(cur, passable)
-        if np.array_equal(grown, cur):
-            return cur
-        cur = grown
+    if cur.ndim == 1:
+        while True:
+            grown = _grow(cur, passable)
+            if np.array_equal(grown, cur):
+                return cur
+            cur = grown
+    out = cur.copy()
+    rows = np.arange(cur.shape[0])
+    while rows.size:
+        grown = _grow(cur, passable)
+        moving = (grown != cur).any(axis=1)
+        out[rows] = grown
+        if moving.all():
+            cur = grown
+            continue
+        rows, cur, passable = rows[moving], grown[moving], passable[moving]
+    return out
 
 
 def holes(blocked: np.ndarray) -> np.ndarray:

@@ -1,6 +1,5 @@
 """Turning the state into the read-only BeliefView a strategy sees."""
 
-import dataclasses
 
 import numpy as np
 

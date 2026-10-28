@@ -2,9 +2,7 @@
 
 import json
 
-import pytest
 
-from candidate import candidate_controller
 from candidate.agent import adapter
 from candidate.agent.controller import Controller
 from candidate.agent.data.types import Direction, MoveResult

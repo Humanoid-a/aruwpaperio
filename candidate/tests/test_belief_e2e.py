@@ -1,7 +1,6 @@
 """The belief against the real engine over whole matches: the one guarantee that
 matters is that the opponent's true position is never given zero probability."""
 
-import pytest
 
 from candidate.runtime_check import run_check
 

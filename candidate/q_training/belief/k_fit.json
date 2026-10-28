@@ -1,0 +1,283 @@
+{
+ "name": "all",
+ "trained_on": [
+  "basic",
+  "enemy",
+  "hunter",
+  "noisy",
+  "random",
+  "self"
+ ],
+ "weights": {
+  "self_trail": -2.8939457738047136,
+  "kills_my_trail": 2.001573806637049,
+  "capture": 0.0621455411817491,
+  "home_pull": 0.34940056905744443,
+  "chase": 0.9695488333494667,
+  "momentum": 1.9377159236594432,
+  "explore": -0.15352466981790258,
+  "home_pressure_half": 2.0,
+  "view_radius": 5
+ },
+ "current": {
+  "self_trail": -6.0,
+  "kills_my_trail": 2.0,
+  "capture": 0.25,
+  "home_pull": 1.0,
+  "chase": 1.0,
+  "momentum": 1.2,
+  "explore": 0.4,
+  "home_pressure_half": 6.0,
+  "view_radius": 5
+ },
+ "report": {
+  "beta": 1.0,
+  "epsilon": 0.02,
+  "chosen": {
+   "home_pressure_half": 2.0,
+   "view_radius": 5
+  },
+  "test": {
+   "basic": {
+    "games": 4,
+    "uniform": {
+     "moves": 8000,
+     "log_likelihood": -1.379000943031569,
+     "accuracy": 0.32775,
+     "p_made": 0.252125
+    },
+    "current": {
+     "moves": 8000,
+     "log_likelihood": -1.1615085115699018,
+     "accuracy": 0.4545,
+     "p_made": 0.40793592804143475
+    },
+    "fitted": {
+     "moves": 8000,
+     "log_likelihood": -1.1788773797142489,
+     "accuracy": 0.46375,
+     "p_made": 0.4194781736736155
+    },
+    "fitted_to_this_type": {
+     "moves": 8000,
+     "log_likelihood": -1.1351184418946623,
+     "accuracy": 0.46825,
+     "p_made": 0.3977562064175859,
+     "weights": {
+      "self_trail": -3.013,
+      "kills_my_trail": 2.0,
+      "capture": 0.21,
+      "home_pull": 0.608,
+      "chase": 0.961,
+      "momentum": 1.147,
+      "explore": 0.042
+     }
+    }
+   },
+   "enemy": {
+    "games": 17,
+    "uniform": {
+     "moves": 34000,
+     "log_likelihood": -1.3251323057509272,
+     "accuracy": 0.2933529411764706,
+     "p_made": 0.26791666666666664
+    },
+    "current": {
+     "moves": 34000,
+     "log_likelihood": -0.9017317971560121,
+     "accuracy": 0.6477352941176471,
+     "p_made": 0.451886601850547
+    },
+    "fitted": {
+     "moves": 34000,
+     "log_likelihood": -0.9015637783899138,
+     "accuracy": 0.5834705882352941,
+     "p_made": 0.49034399011049795
+    },
+    "fitted_to_this_type": {
+     "moves": 34000,
+     "log_likelihood": -0.760932487882782,
+     "accuracy": 0.6778823529411765,
+     "p_made": 0.569533972446313,
+     "weights": {
+      "self_trail": -6.123,
+      "kills_my_trail": 2.0,
+      "capture": -0.817,
+      "home_pull": 2.089,
+      "chase": 0.938,
+      "momentum": 2.659,
+      "explore": 3.223
+     }
+    }
+   },
+   "hunter": {
+    "games": 7,
+    "uniform": {
+     "moves": 14000,
+     "log_likelihood": -1.3811487681807049,
+     "accuracy": 0.3549285714285714,
+     "p_made": 0.25149404761904764
+    },
+    "current": {
+     "moves": 14000,
+     "log_likelihood": -0.8676725306671373,
+     "accuracy": 0.6192857142857143,
+     "p_made": 0.43543136589039044
+    },
+    "fitted": {
+     "moves": 14000,
+     "log_likelihood": -0.4616240809352269,
+     "accuracy": 0.9077142857142857,
+     "p_made": 0.6625995901973097
+    },
+    "fitted_to_this_type": {
+     "moves": 14000,
+     "log_likelihood": -0.22171669608800962,
+     "accuracy": 0.9353571428571429,
+     "p_made": 0.8950317617667385,
+     "weights": {
+      "self_trail": -6.071,
+      "kills_my_trail": 2.013,
+      "capture": 0.137,
+      "home_pull": -0.233,
+      "chase": 1.87,
+      "momentum": 3.94,
+      "explore": 2.405
+     }
+    }
+   },
+   "noisy": {
+    "games": 37,
+    "uniform": {
+     "moves": 74000,
+     "log_likelihood": -1.3207675003771402,
+     "accuracy": 0.2888918918918919,
+     "p_made": 0.2691768018018018
+    },
+    "current": {
+     "moves": 74000,
+     "log_likelihood": -0.8732663645880111,
+     "accuracy": 0.6552297297297297,
+     "p_made": 0.4629585650888925
+    },
+    "fitted": {
+     "moves": 74000,
+     "log_likelihood": -0.8591165456730862,
+     "accuracy": 0.6043783783783784,
+     "p_made": 0.5068389945816197
+    },
+    "fitted_to_this_type": {
+     "moves": 74000,
+     "log_likelihood": -0.717736611343972,
+     "accuracy": 0.6880540540540541,
+     "p_made": 0.5931405672990023,
+     "weights": {
+      "self_trail": -6.135,
+      "kills_my_trail": 2.002,
+      "capture": -0.831,
+      "home_pull": 2.17,
+      "chase": 0.903,
+      "momentum": 2.899,
+      "explore": 3.202
+     }
+    }
+   },
+   "random": {
+    "games": 4,
+    "uniform": {
+     "moves": 8000,
+     "log_likelihood": -1.3820870108102834,
+     "accuracy": 0.26125,
+     "p_made": 0.25121875
+    },
+    "current": {
+     "moves": 8000,
+     "log_likelihood": -1.6890693341258927,
+     "accuracy": 0.252,
+     "p_made": 0.2473110341068878
+    },
+    "fitted": {
+     "moves": 8000,
+     "log_likelihood": -1.6872070907919459,
+     "accuracy": 0.24425,
+     "p_made": 0.24903073249844704
+    },
+    "fitted_to_this_type": {
+     "moves": 8000,
+     "log_likelihood": -1.3827298228268565,
+     "accuracy": 0.2475,
+     "p_made": 0.25108079199387273,
+     "weights": {
+      "self_trail": -0.056,
+      "kills_my_trail": 2.0,
+      "capture": -0.07,
+      "home_pull": 0.045,
+      "chase": 1.0,
+      "momentum": 0.016,
+      "explore": 0.014
+     }
+    }
+   },
+   "self": {
+    "games": 36,
+    "uniform": {
+     "moves": 72000,
+     "log_likelihood": -1.3861904759270607,
+     "accuracy": 0.27741666666666664,
+     "p_made": 0.25003009259259257
+    },
+    "current": {
+     "moves": 72000,
+     "log_likelihood": -1.4262768138013633,
+     "accuracy": 0.16897222222222222,
+     "p_made": 0.24910530054072266
+    },
+    "fitted": {
+     "moves": 72000,
+     "log_likelihood": -1.3564501763644117,
+     "accuracy": 0.3990416666666667,
+     "p_made": 0.26965785159300276
+    },
+    "fitted_to_this_type": {
+     "moves": 72000,
+     "log_likelihood": -1.1809866268972877,
+     "accuracy": 0.4192222222222222,
+     "p_made": 0.32846659068101985,
+     "weights": {
+      "self_trail": -6.053,
+      "kills_my_trail": 2.0,
+      "capture": -0.801,
+      "home_pull": 1.87,
+      "chase": 0.693,
+      "momentum": 0.649,
+      "explore": -2.475
+     }
+    }
+   },
+   "all": {
+    "games": 105,
+    "uniform": {
+     "moves": 210000,
+     "log_likelihood": -1.3524847336926331,
+     "accuracy": 0.29050952380952383,
+     "p_made": 0.2598956349206349
+    },
+    "current": {
+     "moves": 210000,
+     "log_likelihood": -1.1091645755781983,
+     "accuracy": 0.4618952380952381,
+     "p_made": 0.37569845113371764
+    },
+    "fitted": {
+     "moves": 210000,
+     "log_likelihood": -1.0537315163830752,
+     "accuracy": 0.5317380952380952,
+     "p_made": 0.42008386709348483
+    }
+   }
+  }
+ },
+ "data": "E:\\Files\\PythonProject\\python-state-machine-starter\\candidate\\q_training\\belief\\k_data.npz",
+ "split_seed": 0,
+ "created": "2026-10-10T14:11:47"
+}

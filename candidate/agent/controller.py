@@ -87,12 +87,14 @@ class Controller:
         report_every: int = 250,
         show_belief: int = 0,
         describe_belief: bool = False,
+        belief=None,
     ) -> None:
         """`show_belief` is how many of the opponent's most probable cells to print (through the
         diagnostics' echo) on every one of my turns; 0 prints none. `describe_belief` also prints
-        belief_description() on every turn."""
+        belief_description() on every turn. `belief` replaces the belief filter (None: the real one;
+        training games may pass offline.oracle.OracleBelief, the true world)."""
         self.diag = diagnostics if diagnostics is not None else Diagnostics()
-        self.runtime = AgentRuntime(self.diag)
+        self.runtime = AgentRuntime(self.diag, belief=belief)
         self.strategy = strategy
         self.report_every = report_every
         self.show_belief = show_belief

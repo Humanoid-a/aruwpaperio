@@ -1,7 +1,6 @@
 """Step 5 of a frame: my move is applied to every hypothesis at the end of the frame, right after I made it."""
 
 import numpy as np
-import pytest
 
 from candidate.agent import adapter
 from candidate.agent.belief.after_move import MyMove

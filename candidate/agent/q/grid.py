@@ -9,7 +9,7 @@ The crop is larger than the 11 x 11 view so that my own trail fits. Cells off th
 
 Stored as uint8 0/1 (it is logged as bytes). rotate() applies a rotation/flip to a grid or to any array whose
 last two axes are the board, which is what augmentation needs: the same transform for the grid and the
-confidence map.
+probability map.
 """
 
 import numpy as np
@@ -59,6 +59,6 @@ def build_grid(obs: Observation, cfg: QConfig = Q) -> np.ndarray:
 
 def rotate(array: np.ndarray, quarter_turns: int = 0, flip: bool = False) -> np.ndarray:
     """Rotate by quarter turns (and optionally mirror left-right first) the last two axes of an array.
-    Applying the same call to a grid and to a confidence board keeps them consistent."""
+    Applying the same call to a grid and to a probability map keeps them consistent."""
     out = array[..., ::-1] if flip else array
     return np.ascontiguousarray(np.rot90(out, k=quarter_turns, axes=(-2, -1)))

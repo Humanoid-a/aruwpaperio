@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from candidate.agent.config import BOARD_HEIGHT, BOARD_WIDTH
-from candidate.agent.data.cells import FREE, MY_TERRITORY, MY_TRAIL, OPP_TERRITORY, OPP_TRAIL
+from candidate.agent.data.cells import FREE, MY_TERRITORY, OPP_TERRITORY, OPP_TRAIL
 from candidate.agent.data.world import WorldState
 from candidate.agent.geometry import bitboard
 from candidate.agent.geometry.grid import flat

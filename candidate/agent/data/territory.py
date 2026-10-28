@@ -23,6 +23,29 @@ import numpy as np
 from candidate.agent.config import BOARD_HEIGHT
 from candidate.agent.geometry.zobrist import DEFAULT_KEYS, ZobristKeys
 
+# Odd 64-bit multipliers, one per word of an (added, removed) row: a row's hash is the wrapping sum of word x multiplier.
+_ROW_MIX = np.random.default_rng(0x7E11).integers(1, 2**63, size=2 * BOARD_HEIGHT, dtype=np.uint64) | np.uint64(1)
+
+
+def distinct_rows(rows: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """(unique rows, inverse) for a (k, m) int64 array, like np.unique(rows, axis=0, return_inverse=True) but in the
+    order the rows first appear, and much faster: each row is hashed to one 64-bit number and only those are sorted
+    (np.unique with an axis sorts whole rows field by field, which dominated the belief's time). Two different rows
+    with the same hash would be merged, so the result is checked against the rows and, in that (astronomically
+    unlikely) case, computed the slow way."""
+    if rows.shape[0] == 0:
+        return rows, np.zeros(0, dtype=np.int64)
+    h = (rows.view(np.uint64) * _ROW_MIX[: rows.shape[1]]).sum(axis=1, dtype=np.uint64)
+    _, first, inverse = np.unique(h, return_index=True, return_inverse=True)
+    order = np.argsort(first, kind="stable")                    # unique rows in order of first appearance
+    rank = np.empty_like(order)
+    rank[order] = np.arange(len(order))
+    unique, inverse = rows[first[order]], rank[inverse.reshape(-1)]
+    if not np.array_equal(unique[inverse], rows):               # a hash collision: fall back on exact sorting
+        unique, inverse = np.unique(rows, axis=0, return_inverse=True)
+        inverse = inverse.reshape(-1)
+    return unique, inverse
+
 
 class TerritoryDiffs:
     """Deduplicated (added, removed) bitboard pairs. Id 0 means no difference."""
@@ -62,7 +85,7 @@ class TerritoryDiffs:
         if added.shape[0] == 0:
             return np.zeros(0, dtype=np.int64)
         rows = np.ascontiguousarray(np.concatenate([added, removed], axis=1))
-        unique, inverse = np.unique(rows, axis=0, return_inverse=True)
+        unique, inverse = distinct_rows(rows)
         ids = np.zeros(len(unique), dtype=np.int64)
         fresh: list[int] = []
         for i, row in enumerate(unique):
@@ -74,6 +97,9 @@ class TerritoryDiffs:
             else:
                 ids[i] = found
         if fresh:
+            # new ids are handed out in the rows' sorted order (as np.unique(axis=0) would list them), so the ids, and
+            # everything that later depends on their order, do not depend on how the rows were found
+            fresh = [fresh[j] for j in np.lexsort(unique[fresh].T[::-1])]
             new_ids = self._add_many(unique[fresh, :BOARD_HEIGHT], unique[fresh, BOARD_HEIGHT:])
             for i, new_id in zip(fresh, new_ids):
                 self._index[unique[i].tobytes()] = int(new_id)

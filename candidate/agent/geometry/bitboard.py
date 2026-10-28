@@ -144,8 +144,9 @@ def popcount(bb: np.ndarray) -> int | np.ndarray:
     """Number of cells set. An int for a single board; for a batch, an array
     of counts over the leading dimensions."""
     bb = as_board(bb)
-    raw = np.ascontiguousarray(bb).view(np.uint8)
-    counts = np.unpackbits(raw, axis=-1).sum(axis=-1, dtype=np.int64)
+    # np.bitwise_count counts the set bits of each word in one pass (no unpacking into bytes and bits); the words of a
+    # valid board are never negative, so counting the bits of the value is counting the cells
+    counts = np.bitwise_count(bb).sum(axis=-1, dtype=np.int64)
     return int(counts) if bb.ndim == 1 else counts
 
 

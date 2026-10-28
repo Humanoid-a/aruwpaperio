@@ -1,4 +1,4 @@
-"""Step 2 of the Q build: the 22 scalars and the 7 x 21 x 21 grid."""
+"""Step 2 of the Q build: the 23 scalars and the 7 x 21 x 21 grid."""
 
 import numpy as np
 import pytest
@@ -6,8 +6,8 @@ import pytest
 from candidate.agent.geometry.grid import flat
 from candidate.agent.q import features, grid
 from candidate.agent.q.config import QConfig
-from candidate.agent.q.snapshot import build_snapshot
-from candidate.agent.q.types import State
+from candidate.agent.behavior.snapshot import build_snapshot
+from candidate.agent.behavior.states import State
 from candidate.agent.rules.match import MatchRules
 from candidate.tests.q_support import CLOSE, belief_of, rotate_world, scene, world_with
 
@@ -22,10 +22,10 @@ def scalars(view, state=State.PATROL, cfg=None):
 # ---- scalars ---------------------------------------------------------------------------------------------
 
 
-def test_there_are_22_scalars_in_the_briefs_order():
-    assert features.N_SCALARS == 22 and len(features.NAMES) == 22
+def test_there_are_23_scalars_in_the_briefs_order():
+    assert features.N_SCALARS == 23 and len(features.NAMES) == 23
     out = scalars(scene(world_with(CLOSE), CLOSE))
-    assert out.shape == (22,) and out.dtype == np.float32
+    assert out.shape == (23,) and out.dtype == np.float32
 
 
 def test_scaling_follows_the_brief():
@@ -69,7 +69,8 @@ def test_flags_and_the_belief_spread():
     wide = np.ones((50, 50))
     unseen = scene(world_with(CLOSE), CLOSE, belief_of(residual=wide))
     g = dict(zip(features.NAMES, scalars(unseen)))
-    assert g["enemy_visible"] == 0.0 and g["belief_spread"] == pytest.approx(np.log1p(2500) / np.log(2500))
+    # every cell is equally likely, except the 121 I can see (the map knows it is not there)
+    assert g["enemy_visible"] == 0.0 and g["belief_spread"] == pytest.approx(np.log1p(2500 - 121) / np.log(2500))
 
 
 def test_turns_since_sighting_is_capped():

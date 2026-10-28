@@ -1,0 +1,72 @@
+1396000 moves; games train 488, val 105, test 105
+  home_pressure_half   2.0  view_radius  2: validation log-likelihood -1.0642
+  home_pressure_half   2.0  view_radius  3: validation log-likelihood -1.0641
+  home_pressure_half   2.0  view_radius  4: validation log-likelihood -1.0641
+  home_pressure_half   2.0  view_radius  5: validation log-likelihood -1.0641
+  home_pressure_half   2.0  view_radius  6: validation log-likelihood -1.0641
+  home_pressure_half   2.0  view_radius  8: validation log-likelihood -1.0641
+  home_pressure_half   2.0  view_radius 10: validation log-likelihood -1.0641
+  home_pressure_half   3.0  view_radius  2: validation log-likelihood -1.0655
+  home_pressure_half   3.0  view_radius  3: validation log-likelihood -1.0655
+  home_pressure_half   3.0  view_radius  4: validation log-likelihood -1.0655
+  home_pressure_half   3.0  view_radius  5: validation log-likelihood -1.0654
+  home_pressure_half   3.0  view_radius  6: validation log-likelihood -1.0655
+  home_pressure_half   3.0  view_radius  8: validation log-likelihood -1.0655
+  home_pressure_half   3.0  view_radius 10: validation log-likelihood -1.0655
+  home_pressure_half   4.0  view_radius  2: validation log-likelihood -1.0664
+  home_pressure_half   4.0  view_radius  3: validation log-likelihood -1.0664
+  home_pressure_half   4.0  view_radius  4: validation log-likelihood -1.0664
+  home_pressure_half   4.0  view_radius  5: validation log-likelihood -1.0663
+  home_pressure_half   4.0  view_radius  6: validation log-likelihood -1.0664
+  home_pressure_half   4.0  view_radius  8: validation log-likelihood -1.0664
+  home_pressure_half   4.0  view_radius 10: validation log-likelihood -1.0664
+  home_pressure_half   6.0  view_radius  2: validation log-likelihood -1.0674
+  home_pressure_half   6.0  view_radius  3: validation log-likelihood -1.0674
+  home_pressure_half   6.0  view_radius  4: validation log-likelihood -1.0674
+  home_pressure_half   6.0  view_radius  5: validation log-likelihood -1.0674
+  home_pressure_half   6.0  view_radius  6: validation log-likelihood -1.0674
+  home_pressure_half   6.0  view_radius  8: validation log-likelihood -1.0674
+  home_pressure_half   6.0  view_radius 10: validation log-likelihood -1.0675
+  home_pressure_half   9.0  view_radius  2: validation log-likelihood -1.0681
+  home_pressure_half   9.0  view_radius  3: validation log-likelihood -1.0681
+  home_pressure_half   9.0  view_radius  4: validation log-likelihood -1.0681
+  home_pressure_half   9.0  view_radius  5: validation log-likelihood -1.0681
+  home_pressure_half   9.0  view_radius  6: validation log-likelihood -1.0681
+  home_pressure_half   9.0  view_radius  8: validation log-likelihood -1.0681
+  home_pressure_half   9.0  view_radius 10: validation log-likelihood -1.0682
+  home_pressure_half  14.0  view_radius  2: validation log-likelihood -1.0685
+  home_pressure_half  14.0  view_radius  3: validation log-likelihood -1.0684
+  home_pressure_half  14.0  view_radius  4: validation log-likelihood -1.0685
+  home_pressure_half  14.0  view_radius  5: validation log-likelihood -1.0684
+  home_pressure_half  14.0  view_radius  6: validation log-likelihood -1.0684
+  home_pressure_half  14.0  view_radius  8: validation log-likelihood -1.0685
+  home_pressure_half  14.0  view_radius 10: validation log-likelihood -1.0685
+  home_pressure_half  20.0  view_radius  2: validation log-likelihood -1.0685
+  home_pressure_half  20.0  view_radius  3: validation log-likelihood -1.0685
+  home_pressure_half  20.0  view_radius  4: validation log-likelihood -1.0685
+  home_pressure_half  20.0  view_radius  5: validation log-likelihood -1.0685
+  home_pressure_half  20.0  view_radius  6: validation log-likelihood -1.0685
+  home_pressure_half  20.0  view_radius  8: validation log-likelihood -1.0686
+  home_pressure_half  20.0  view_radius 10: validation log-likelihood -1.0686
+chosen: home_pressure_half 2.0, view_radius 5 (validation log-likelihood -1.0641)
+
+K's weights        current    fitted
+  self_trail           -6.000    -2.894
+  kills_my_trail        2.000     2.002
+  capture               0.250     0.062
+  home_pull             1.000     0.349
+  chase                 1.000     0.970
+  momentum              1.200     1.938
+  explore               0.400    -0.154
+  home_pressure_half    6.000     2.000
+  view_radius           5.000     5.000
+
+held-out games: mean log-likelihood of the move made (higher is better) / how often K's top move was it
+  opponent games           uniform         current K          fitted K    fitted to type
+  basic        4    -1.379 / 32.8%    -1.162 / 45.5%    -1.179 / 46.4%    -1.135 / 46.8%
+  enemy       17    -1.325 / 29.3%    -0.902 / 64.8%    -0.902 / 58.3%    -0.761 / 67.8%
+  hunter       7    -1.381 / 35.5%    -0.868 / 61.9%    -0.462 / 90.8%    -0.222 / 93.5%
+  noisy       37    -1.321 / 28.9%    -0.873 / 65.5%    -0.859 / 60.4%    -0.718 / 68.8%
+  random       4    -1.382 / 26.1%    -1.689 / 25.2%    -1.687 / 24.4%    -1.383 / 24.8%
+  self        36    -1.386 / 27.7%    -1.426 / 16.9%    -1.356 / 39.9%    -1.181 / 41.9%
+  all        105    -1.352 / 29.1%    -1.109 / 46.2%    -1.054 / 53.2%   

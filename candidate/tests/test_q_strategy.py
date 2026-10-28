@@ -1,18 +1,17 @@
 """Step 6 of the Q build, in pieces: QStrategy as the Strategy the controller runs, with the stand-in for Q."""
 
 import numpy as np
-import pytest
 
 from candidate.agent.controller import Controller
 from candidate.agent.data.types import Direction, MoveResult
 from candidate.agent.diagnostics import Diagnostics
 from candidate.agent.geometry import bitboard
 from candidate.agent.geometry.grid import flat, step
-from candidate.agent.q import movers
-from candidate.agent.q.config import QConfig
+from candidate.agent.behavior import common, moves, return_home
+from candidate.agent.behavior.config import BehaviorConfig
+from candidate.agent.behavior.states import State
 from candidate.agent.q.heuristic import HeuristicQ
 from candidate.agent.q.strategy import QStrategy
-from candidate.agent.q.types import State
 from candidate.agent.runtime import Event
 from candidate.tests.live import LiveGame
 from candidate.tests.q_support import CLOSE, FAR, belief_of, scene, world_with
@@ -21,7 +20,7 @@ N, E, S, W = Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
 
 
 class FixedQ:
-    """A Q that always returns the same five numbers (order: EXPAND, RETURN, HUNT, TRACK, PATROL)."""
+    """A Q that always returns the same six numbers (order: EXPAND, EXPAND2, RETURN, HUNT, TRACK, PATROL)."""
 
     def __init__(self, *values):
         self.fixed = np.array(values, dtype=float)
@@ -31,7 +30,8 @@ class FixedQ:
 
 
 def far_enemy(at=(25, 45)):
-    return belief_of([dict(pos=flat(*at), weight=1.0)])
+    """Certainly at `at`, and every hypothesis agrees about both lands (the start lands, as on the scenes' boards)."""
+    return belief_of([dict(pos=flat(*at), weight=1.0, my_land=CLOSE.me.start_bb, opp_land=CLOSE.opp.start_bb)])
 
 
 # ---- the hard rules, seen through the strategy --------------------------------------------------------------
@@ -39,7 +39,7 @@ def far_enemy(at=(25, 45)):
 
 def test_after_a_death_the_state_is_patrol_whatever_q_says():
     for event in (Event.SELF_DIED, Event.KILLED_BY_OPPONENT):
-        strategy = QStrategy(FixedQ(9, 9, 9, 9, 0))
+        strategy = QStrategy(FixedQ(9, 0, 9, 9, 9, 0))
         view = scene(world_with(CLOSE), CLOSE, far_enemy(), events=(event,))
         move = strategy.choose(view)
         assert strategy.state == State.PATROL and strategy.last.forced == "death"
@@ -47,7 +47,7 @@ def test_after_a_death_the_state_is_patrol_whatever_q_says():
 
 
 def test_a_thin_margin_forces_return_and_the_move_is_returns():
-    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0))
+    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0, 0))
     world = world_with(CLOSE, my_trail=[(25, 20), (25, 21), (25, 22)])
     view = scene(world, CLOSE, belief_of([dict(pos=flat(25, 27), weight=1.0)]))       # 5 from my head: margin 5 - 4 = 1
     move = strategy.choose(view)
@@ -57,8 +57,8 @@ def test_a_thin_margin_forces_return_and_the_move_is_returns():
 
 
 def test_the_look_ahead_refuses_a_step_out_that_would_leave_a_negative_margin(monkeypatch):
-    monkeypatch.setattr(movers, "move_for", lambda state, frame: E if state == State.EXPAND else movers._pace(frame))
-    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0))
+    monkeypatch.setattr(moves, "move_for", lambda state, frame: E if state == State.EXPAND else common.pace(frame))
+    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0, 0))
     # I stand on the east edge of my land; the enemy is two cells beyond: stepping out lets it reach my trail first
     view = scene(world_with(CLOSE, me=(25, 19)), CLOSE, belief_of([dict(pos=flat(25, 21), weight=1.0)]))
     move = strategy.choose(view)
@@ -67,8 +67,8 @@ def test_the_look_ahead_refuses_a_step_out_that_would_leave_a_negative_margin(mo
 
 
 def test_the_look_ahead_sends_an_exposed_agent_home_instead_of_further_out(monkeypatch):
-    monkeypatch.setattr(movers, "move_for", lambda state, frame: E if state == State.EXPAND else movers.return_(frame))
-    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0))
+    monkeypatch.setattr(moves, "move_for", lambda state, frame: E if state == State.EXPAND else return_home.move(frame))
+    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0, 0))
     world = world_with(CLOSE, my_trail=[(25, 20), (25, 21)])
     view = scene(world, CLOSE, belief_of([dict(pos=flat(25, 26), weight=1.0)]))      # margin 3 now, but east leaves it at -1
     move = strategy.choose(view)
@@ -77,15 +77,15 @@ def test_the_look_ahead_sends_an_exposed_agent_home_instead_of_further_out(monke
 
 
 def test_the_look_ahead_leaves_a_safe_step_alone(monkeypatch):
-    monkeypatch.setattr(movers, "move_for", lambda state, frame: E)
-    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0))
+    monkeypatch.setattr(moves, "move_for", lambda state, frame: E)
+    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0, 0))
     view = scene(world_with(CLOSE, my_trail=[(25, 20), (25, 21)]), CLOSE, far_enemy())
     assert strategy.choose(view) == E and strategy.last.forced is None and strategy.state == State.EXPAND
 
 
 def test_the_look_ahead_can_be_switched_off(monkeypatch):
-    monkeypatch.setattr(movers, "move_for", lambda state, frame: E)
-    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0), QConfig(safety_lookahead=False))
+    monkeypatch.setattr(moves, "move_for", lambda state, frame: E)
+    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0, 0), behavior=BehaviorConfig(safety_lookahead=False))
     world = world_with(CLOSE, my_trail=[(25, 20), (25, 21)])
     assert strategy.choose(scene(world, CLOSE, belief_of([dict(pos=flat(25, 26), weight=1.0)]))) == E
 
@@ -94,11 +94,11 @@ def test_the_look_ahead_can_be_switched_off(monkeypatch):
 
 
 def test_the_strategy_keeps_its_state_while_the_values_are_within_h():
-    strategy = QStrategy(FixedQ(1.0, 0.0, 0.0, 0.5, 2.0))
+    strategy = QStrategy(FixedQ(1.0, 0, 0.0, 0.0, 0.5, 2.0))
     view = scene(world_with(CLOSE), CLOSE, far_enemy())
     strategy.choose(view)
     assert strategy.state == State.PATROL                         # started in PATROL; nothing beats it by more than 2
-    strategy.q_model = FixedQ(5.0, 0.0, 0.0, 0.5, 2.0)
+    strategy.q_model = FixedQ(5.0, 0, 0.0, 0.0, 0.5, 2.0)
     strategy.choose(scene(world_with(CLOSE), CLOSE, far_enemy(), turn=41))
     assert strategy.state == State.EXPAND                         # now it does
 
@@ -107,7 +107,7 @@ def test_the_strategy_keeps_its_state_while_the_values_are_within_h():
 
 
 def test_after_a_refused_move_the_state_is_kept_and_only_the_move_changes():
-    strategy = QStrategy(FixedQ(0, 0, 0, 0, 5))
+    strategy = QStrategy(FixedQ(0, 0, 0, 0, 0, 5))
     view = scene(world_with(CLOSE, me=(25, 18)), CLOSE, far_enemy())
     first = strategy.choose(view)
     state = strategy.state
@@ -121,22 +121,22 @@ def test_after_a_refused_move_the_state_is_kept_and_only_the_move_changes():
 
 
 def test_a_state_with_no_move_falls_back_on_a_safe_one_and_says_so(monkeypatch):
-    monkeypatch.setattr(movers, "move_for", lambda state, frame: None)
-    strategy = QStrategy(FixedQ(0, 0, 0, 0, 5))
+    monkeypatch.setattr(moves, "move_for", lambda state, frame: None)
+    strategy = QStrategy(FixedQ(0, 0, 0, 0, 0, 5))
     view = scene(world_with(CLOSE, my_trail=[(25, 20), (25, 21)]), CLOSE, far_enemy())
     move = strategy.choose(view)
     assert move in view.safe_moves and strategy.stats["guarded"] >= 1
 
 
 def test_a_move_onto_my_own_trail_is_never_returned(monkeypatch):
-    monkeypatch.setattr(movers, "move_for", lambda state, frame: W)             # straight back onto my trail
-    strategy = QStrategy(FixedQ(0, 0, 0, 0, 5))
+    monkeypatch.setattr(moves, "move_for", lambda state, frame: W)             # straight back onto my trail
+    strategy = QStrategy(FixedQ(0, 0, 0, 0, 0, 5))
     view = scene(world_with(CLOSE, my_trail=[(25, 20), (25, 21)]), CLOSE, far_enemy())
     assert strategy.choose(view) in view.safe_moves
 
 
 def test_leaving_my_land_remembers_the_direction_and_a_capture_forgets_it():
-    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0))
+    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0, 0))
     view = scene(world_with(CLOSE, me=(25, 19)), CLOSE, far_enemy())
     strategy.choose(view)
     strategy.on_result(view, E, MoveResult.NORMAL)
@@ -151,7 +151,7 @@ def test_leaving_my_land_remembers_the_direction_and_a_capture_forgets_it():
 
 
 def test_the_debug_label_names_the_state_and_a_forced_rule():
-    strategy = QStrategy(FixedQ(0, 0, 0, 0, 5))
+    strategy = QStrategy(FixedQ(0, 0, 0, 0, 0, 5))
     strategy.choose(scene(world_with(CLOSE), CLOSE, far_enemy()))
     assert strategy.debug_state() == "PATROL"
     strategy.choose(scene(world_with(CLOSE), CLOSE, far_enemy(), events=(Event.SELF_DIED,), turn=41))
@@ -159,7 +159,7 @@ def test_the_debug_label_names_the_state_and_a_forced_rule():
 
 
 def test_reset_starts_a_match_afresh():
-    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0))
+    strategy = QStrategy(FixedQ(9, 0, 0, 0, 0, 0))
     strategy.choose(scene(world_with(CLOSE), CLOSE, far_enemy()))
     strategy.hints.outward = E
     strategy.reset()
@@ -173,9 +173,9 @@ def test_every_frame_records_the_three_inputs_the_values_and_the_masks():
     strategy = QStrategy()
     strategy.choose(scene(world_with(CLOSE, my_trail=[(25, 20), (25, 21)]), CLOSE, far_enemy()))
     record = strategy.last
-    assert record.inputs.grid.shape == (7, 21, 21) and record.inputs.scalars.shape == (22,)
-    assert record.inputs.confidence.shape == (8, 10, 10)
-    assert record.values.shape == (5,) and record.valid.shape == (5,) and record.valid.dtype == bool
+    assert record.inputs.grid.shape == (7, 21, 21) and record.inputs.scalars.shape == (23,)
+    assert record.inputs.probmap.shape == (10, 10, 10)
+    assert record.values.shape == (6,) and record.valid.shape == (6,) and record.valid.dtype == bool
     assert record.inputs.scalars[17 + int(record.previous)] == 1.0                    # the state it was in when it looked
 
 
@@ -230,7 +230,7 @@ def test_a_masked_state_is_never_the_state_taken_unless_a_hard_rule_forced_it():
 def test_the_stand_in_q_is_in_cells_of_score_and_orders_the_states_sensibly():
     q = HeuristicQ()
     strategy = QStrategy(q)
-    out = strategy.choose(scene(world_with(CLOSE), CLOSE, far_enemy()))
+    strategy.choose(scene(world_with(CLOSE), CLOSE, far_enemy()))
     values = strategy.last.values
     assert values[State.EXPAND] > values[State.PATROL]                          # at home with nothing in the way, go out
     long_trail = [(25, 20 + k) for k in range(12)]

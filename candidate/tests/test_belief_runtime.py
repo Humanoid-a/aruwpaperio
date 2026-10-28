@@ -1,6 +1,5 @@
 """The belief wired into the run-time layer, on the framework's real rules."""
 
-import numpy as np
 import pytest
 
 from candidate.agent.belief.filter import BeliefFilter

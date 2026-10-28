@@ -87,8 +87,9 @@ class HypothesisStore:
         return cls(**{f: np.asarray(arrays[f], dtype=_DTYPES[f]) for f in FIELDS})
 
     def take(self, index) -> "HypothesisStore":
-        """The hypotheses at `index` (indices or a boolean mask), copied."""
-        return HypothesisStore(**{f: getattr(self, f)[index].copy() for f in FIELDS})
+        """The hypotheses at `index` (indices or a boolean mask), copied: indexing with an array always copies."""
+        index = np.asarray(index)
+        return HypothesisStore(**{f: getattr(self, f)[index] for f in FIELDS})
 
     @classmethod
     def concatenate(cls, parts: list["HypothesisStore"]) -> "HypothesisStore":

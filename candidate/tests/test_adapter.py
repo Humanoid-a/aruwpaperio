@@ -4,12 +4,12 @@ import numpy as np
 import pytest
 
 from candidate.agent import adapter
-from candidate.agent.config import BOARD_HEIGHT, BOARD_WIDTH, CELL_COUNT
+from candidate.agent.config import CELL_COUNT
 from candidate.agent.data.cells import FREE, MY_TERRITORY, MY_TRAIL, OPP_TERRITORY, OPP_TRAIL
 from candidate.agent.data.types import Direction, MoveResult, Side
 from candidate.agent.geometry.grid import flat
 from candidate.agent.rules.match import MatchRules
-from candidate.tests.builders import put_agent, put_territory, put_trail, square
+from candidate.tests.builders import put_agent, put_territory, put_trail
 from candidate.tests.live import LiveGame
 from territorygame.api.direction import Direction as FrameworkDirection
 from territorygame.api.grid_position import GridPosition

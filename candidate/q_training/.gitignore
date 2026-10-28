@@ -1,0 +1,33 @@
+raw/
+datasets/
+logs/
+smoke/
+belief/*.npz
+
+# Online runs: only the networks that ship are kept (the rest is ~12 GB of games and per-epoch checkpoints).
+#   online15/latest*         the newest online15 network and its K (epoch 64)
+#   online15/epoch_025       the controller's DEFAULT_WEIGHTS / DEFAULT_K_WEIGHTS
+#   online15/best.pt         online15's gate player (= epoch_004)
+#   online9/epoch_004        the champion opponent of online12-15 (and online10's start)
+#   online12/epoch_008       online13's start
+#   online10/latest_k.npz    online11's start K
+online/*
+!online/online9/
+!online/online10/
+!online/online12/
+!online/online15/
+online/*/*
+!online/*/config.json
+!online/online15/latest.pt
+!online/online15/latest_k.npz
+!online/online15/latest.json
+!online/online15/best.pt
+!online/online10/latest_k.npz
+!online/online15/epoch_025/
+!online/online9/epoch_004/
+!online/online12/epoch_008/
+online/*/epoch_*/*
+!online/*/epoch_*/weights.pt
+!online/*/epoch_*/weights.json
+!online/*/epoch_*/k.npz
+!online/*/epoch_*/gate.json

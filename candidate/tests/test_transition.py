@@ -2,15 +2,14 @@ import numpy as np
 import pytest
 
 from candidate.agent.config import BOARD_WIDTH
-from candidate.agent.data.cells import MY_TERRITORY, MY_TRAIL
+from candidate.agent.data.cells import MY_TERRITORY
 from candidate.agent.data.types import Direction, MoveResult, Side
-from candidate.agent.geometry import bitboard
 from candidate.agent.geometry.grid import flat
 from candidate.agent.geometry.zobrist import DEFAULT_KEYS
 from candidate.agent.rules.match import MatchRules
 from candidate.agent.rules.reference import apply_move
 from candidate.agent.rules.transition import BitWorld, classify_moves, step
-from candidate.tests.builders import put_agent, put_territory, put_trail
+from candidate.tests.builders import put_agent, put_territory
 from candidate.tests.test_reference_rules import RULES, loop_world
 
 ME, OPP = Side.ME, Side.OPP

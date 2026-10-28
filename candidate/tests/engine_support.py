@@ -3,8 +3,6 @@ against ground truth. Production code must not import territorygame outside
 the (future) adapter and self-play modules; tests may, because they are the
 oracle."""
 
-import dataclasses
-import queue
 
 import numpy as np
 
@@ -24,11 +22,7 @@ from candidate.agent.data.world import WorldState
 from territorygame.api.agent_controller import AgentController
 from territorygame.api.direction import Direction
 from territorygame.api.game_api import GameApi
-from territorygame.api.grid_position import GridPosition
 from territorygame.api.move_result import MoveResult
-from territorygame.domain.game_config import GameConfig
-from territorygame.engine.game_engine import GameEngine
-from territorygame.engine.game_observer import GameObserver
 from territorygame.helpers.movement_utils import is_valid_move
 
 
@@ -46,14 +40,6 @@ _OUR_RESULT = {
 }
 
 
-class _Collector(GameObserver):
-    def __init__(self) -> None:
-        self.snapshots: "queue.Queue" = queue.Queue()
-
-    def on_game_state_changed(self, snapshot) -> None:
-        self.snapshots.put(snapshot)
-
-
 def play_match(
     controllers: list[AgentController], turns: int, respawns: list[tuple[int, int]] | None = None
 ) -> list:
@@ -61,22 +47,11 @@ def play_match(
     published snapshot: snapshot 0 is the initial board, snapshot j the board
     after j turns (players alternate, player 0 first). `respawns` optionally
     moves the two respawn cells, as (y, x), e.g. closer together."""
-    overrides = {}
-    if respawns is not None:
-        overrides["respawn_positions"] = [GridPosition(x, y) for y, x in respawns]
-    config = dataclasses.replace(
-        GameConfig.load_default(), turns_per_player=turns, autoplay_turn_delay_millis=0, **overrides
-    )
+    from candidate.offline import match
+
+    config = match.config_for(turns, respawns)
     assert (config.board_width, config.board_height) == (BOARD_WIDTH, BOARD_HEIGHT)
-    engine = GameEngine(config, controllers)
-    collector = _Collector()
-    engine.add_observer(collector)
-    engine.reset(controllers)
-    snapshots = [collector.snapshots.get(timeout=10)]
-    engine.start()
-    while not snapshots[-1].game_over:
-        snapshots.append(collector.snapshots.get(timeout=60))
-    return snapshots
+    return match.play(controllers, turns, respawns, timeout=600, keep=True).snapshots
 
 
 def _flat(position) -> int:

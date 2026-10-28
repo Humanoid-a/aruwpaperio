@@ -28,7 +28,6 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from candidate.agent.config import BOARD_HEIGHT
 from candidate.agent.data.belief_view import BeliefEvent
 from candidate.agent.data.hypotheses import HypothesisStore
 from candidate.agent.data.observation import Observation

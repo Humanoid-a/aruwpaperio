@@ -18,8 +18,10 @@ Split of responsibility: **method1.0 informs the design; the guide, source, and 
 
 ## Working references
 
+- [`ARCHITECTURE_GUIDE.md`](ARCHITECTURE_GUIDE.md) — **start here**: a guided tour of the whole design, what each part does and why, how it is verified, and likely interview questions.
 - [`PROJECT_KNOWLEDGE.md`](PROJECT_KNOWLEDGE.md) — source-verified game facts, move lifecycle, constraints, method1.0 reconciliation, and current status.
 - [`Q_BUILD_PLAN.md`](Q_BUILD_PLAN.md) — the build plan, decisions and status of the Q model and the five action-states, from the brief [`Q_Model.pdf`](Q_Model.pdf).
+- [`Q_AND_K_INPUTS.md`](Q_AND_K_INPUTS.md) — every input of Q (the grid, the 23 scalars, the probability map) and of K (the 17 per-hypothesis features), how each is calculated, and where it lives in the code.
 - [`CODEBASE_INDEX.md`](CODEBASE_INDEX.md) — task-oriented map of the implementation and tests, plus where our code goes.
 - [`README.md`](../../README.md) — setup, execution, and high-level repository structure (upstream starter doc).
 

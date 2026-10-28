@@ -6,7 +6,7 @@ from candidate.agent.data.cells import FREE, MY_TERRITORY, MY_TRAIL, OPP_TERRITO
 from candidate.agent.data.memory import NEVER_SEEN, MemoryMap
 from candidate.agent.geometry import bitboard
 from candidate.agent.geometry.grid import flat
-from candidate.agent.rules.match import MatchRules, starting_cells
+from candidate.agent.rules.match import MatchRules
 from candidate.tests.builders import make_observation, square
 
 RULES = MatchRules.from_respawns(flat(25, 4), flat(25, 45))

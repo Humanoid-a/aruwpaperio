@@ -4,7 +4,7 @@ makes the opponent's moves itself, so any situation can be staged."""
 
 from candidate.agent import adapter
 from candidate.agent.config import WINDOW_SIZE
-from candidate.agent.data.types import Direction, MoveResult, Side
+from candidate.agent.data.types import Direction, MoveResult
 from candidate.agent.data.world import WorldState
 from candidate.agent.rules.match import MatchRules
 from candidate.agent.runtime import AgentRuntime, TurnView

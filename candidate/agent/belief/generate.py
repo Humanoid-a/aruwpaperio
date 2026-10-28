@@ -135,10 +135,10 @@ def classify(state: BeliefState, sit: Situation) -> Expansion:
 
     batch = SuccessorBatch(
         n=n, pos=store.pos, trail_bb=store.trail_bb, trail_len=store.trail_len, last_dir=store.last_dir,
-        opp_count=store.opp_count, weight=store.weight,
+        opp_count=store.opp_count, weight=store.weight, opp_land_id=store.opp_land_id, my_land_id=store.my_land_id,
         dest=dest, legal=legal, self_trail=self_trail, kills_me=kills_me, enters_own=enters_own,
         captures=captures, capture_gain=capture_gain,
-        my_pos=sit.my_pos, my_trail_bb=sit.my_trail_bb, opp_land_bb=sit.opp_base, obs=sit.obs,
+        my_pos=sit.my_pos, my_trail_bb=sit.my_trail_bb, opp_land_bb=sit.opp_base, obs=sit.obs, situation=sit,
     )
     return Expansion(batch, sit, store, capture_index, after, taken, gain, loss, my_exact)
 
@@ -201,11 +201,12 @@ def build_children(state: BeliefState, exp: Expansion, parents: np.ndarray, move
 
     parent_pos = store.pos[parents].astype(np.int64)
     pos = np.where(death, sit.opponent_respawn, dest)
-    trail = store.trail_bb[parents].copy()
-    trail_len = store.trail_len[parents].copy()
-    opp_land_id = store.opp_land_id[parents].copy()
-    my_land_id = store.my_land_id[parents].copy()
-    opp_count = store.opp_count[parents].copy()
+    parents = np.asarray(parents)                       # indexing with an array copies: the parents stay as they were
+    trail = store.trail_bb[parents]
+    trail_len = store.trail_len[parents]
+    opp_land_id = store.opp_land_id[parents]
+    my_land_id = store.my_land_id[parents]
+    opp_count = store.opp_count[parents]
     my_loss = np.zeros(m, dtype=np.int64)
 
     # A step outside its own land lays one more trail cell (and a first step starts the trail).

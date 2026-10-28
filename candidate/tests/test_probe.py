@@ -1,6 +1,5 @@
 """The probe policy, alone and driven through the run-time layer."""
 
-import pytest
 
 from candidate.agent.data.types import Direction, MoveResult, Side
 from candidate.agent.diagnostics import Diagnostics
@@ -19,7 +18,7 @@ def pace(live):
     live.opponent_moves(E if live.world().opp_pos == flat(25, 45) else W)
 
 
-def drive(live, runtime, policy, turns, record_states=False):
+def drive(live, runtime, policy, turns):
     states = []
     for _ in range(turns):
         view = live.begin(runtime)

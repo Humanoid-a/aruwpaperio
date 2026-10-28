@@ -1,0 +1,83 @@
+{
+ "meta": {
+  "name": "online15-epoch025",
+  "online": "online15",
+  "epoch": 25,
+  "trained_from": "E:\\Files\\PythonProject\\python-state-machine-starter\\candidate\\q_training\\online\\online15\\epoch_024\\weights.pt",
+  "data": [
+   "E:\\Files\\PythonProject\\python-state-machine-starter\\candidate\\q_training\\online\\online15\\epoch_023\\raw",
+   "E:\\Files\\PythonProject\\python-state-machine-starter\\candidate\\q_training\\online\\online15\\epoch_024\\raw",
+   "E:\\Files\\PythonProject\\python-state-machine-starter\\candidate\\q_training\\online\\online15\\epoch_025\\raw"
+  ],
+  "branches": [
+   "grid",
+   "scalars",
+   "probmap"
+  ],
+  "inputs_version": "8e6910af762897e2",
+  "created": "2026-10-12T22:24:35",
+  "val": 74831.53158618842,
+  "test": NaN,
+  "test_r2": null,
+  "games": {
+   "train": 755,
+   "val": 145,
+   "test": 0
+  },
+  "frames": {
+   "train": 387438,
+   "val": 74778,
+   "test": 0
+  }
+ },
+ "report": {
+  "device": "cuda",
+  "label_scale": 322.042507388163,
+  "start_val": 75099.20367867747,
+  "stages": [
+   {
+    "branches": [
+     "grid",
+     "scalars",
+     "probmap"
+    ],
+    "best_val": 74831.53158618842,
+    "start_val": 75099.20367867747,
+    "epochs": 8,
+    "kept": true
+   }
+  ],
+  "branches": [
+   "grid",
+   "scalars",
+   "probmap"
+  ],
+  "val": 74831.53158618842,
+  "test": NaN,
+  "test_constant_baseline": NaN,
+  "test_r2": null,
+  "val_constant_baseline": 118168.0078125,
+  "val_r2": 0.36673611604821676,
+  "calibration": {},
+  "choice_frequency": {
+   "EXPAND": 0.305078145282725,
+   "EXPAND2": 0.07897173615798674,
+   "RETURN": 0.3430971666926286,
+   "HUNT": 0.01628675770635374,
+   "TRACK": 0.18709001851948007,
+   "PATROL": 0.06947617564082594
+  },
+  "games": {
+   "train": 755,
+   "val": 145,
+   "test": 0
+  },
+  "frames": {
+   "train": 387438,
+   "val": 74778,
+   "test": 0
+  },
+  "label_mean": 91.25592041015625,
+  "label_std": 363.03125
+ }
+}

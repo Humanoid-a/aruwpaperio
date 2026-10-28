@@ -93,11 +93,6 @@ def scene(world: WorldState, rules: MatchRules = FAR, belief: BeliefView | None 
     return TurnView(obs, memory, rules, tuple(events), opp_last_seen, 0, belief)
 
 
-def open_world(rules: MatchRules = FAR) -> WorldState:
-    """Both players on their start land, nothing else."""
-    return rules.initial_world()
-
-
 def world_with(rules: MatchRules = FAR, *, me=None, opp=None, my_land=(), opp_land=(), my_trail=(), opp_trail=()):
     world = rules.initial_world()
     if my_land:

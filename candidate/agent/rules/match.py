@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from candidate.agent.config import BOARD_HEIGHT, BOARD_WIDTH, CELL_COUNT, STARTING_TERRITORY_SIZE
+from candidate.agent.config import BOARD_WIDTH, CELL_COUNT, STARTING_TERRITORY_SIZE
 from candidate.agent.data.cells import MY_TERRITORY, OPP_TERRITORY
 from candidate.agent.data.types import Side
 from candidate.agent.data.world import WorldState

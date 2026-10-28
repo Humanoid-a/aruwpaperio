@@ -2,10 +2,8 @@
 matches, the board must equal what the reference and fast transitions predict
 from the board before it and the move the controller made."""
 
-import numpy as np
 import pytest
 
-from candidate.agent.config import BOARD_WIDTH
 from candidate.agent.data.types import MoveResult, Side
 from candidate.agent.geometry.grid import flat
 from candidate.agent.rules.match import MatchRules

@@ -1,8 +1,9 @@
 """Headless check of the run-time layer against the real engine.
 
-Plays the candidate controller (the loop-making probe from agent.probe, wired
-through agent.runtime) in a full match with no GUI, then compares everything
-the runtime believed with the engine's true state:
+Plays the candidate controller (agent.controller.Controller with either the
+loop-making probe from agent.probe or the real QStrategy, wired through
+agent.runtime) in a full match with no GUI, then compares everything the
+runtime believed with the engine's true state:
 
   * adapter      every observation's position, trail, counts, opponent
                  sighting and window contents against the true board;
@@ -10,26 +11,29 @@ the runtime believed with the engine's true state:
                  the true one, turn by turn;
   * events       deaths, opponent kills and captures the runtime inferred
                  against the engine's own death and kill counters;
+  * belief       the probability it put on the opponent's true cell, and the
+                 mass on its exactly right hidden state (cell, trail, count);
   * prediction   the runtime's per-move predictions (in the diagnostics);
   * latency      time per turn and per stage.
 
 Run it from the repository root:
 
     python -m candidate.runtime_check --opponent hunter --turns 600 --close --suicide-every 4
+    python -m candidate.runtime_check --strategy q --opponent enemy --turns 400
 
-Options: --opponent {enemy,basic,random,hunter}   who to play against
+Options: --strategy {probe,q}  what plays: the probe (default) or QStrategy
+         --opponent {enemy,basic,random,hunter}   who to play against
          --turns N        turns per player (default 400)
          --player {0,1}   which side the candidate plays (default 0)
          --close          put the respawns 13 cells apart so the players meet
-         --suicide-every N  every Nth excursion, deliberately step on my own trail
-         --no-hunt        do not step onto the opponent's trail
+         --suicide-every N  probe only: every Nth excursion, step on my own trail
+         --no-hunt        probe only: do not step onto the opponent's trail
+         --seed N         probe only: its random seed
          --log-dir DIR    write the per-turn log there
 Exit status is 0 when the run is clean, 1 otherwise.
 """
 
 import argparse
-import dataclasses
-import queue
 import sys
 from dataclasses import dataclass, field
 
@@ -42,6 +46,7 @@ from candidate.agent.diagnostics import Diagnostics
 from candidate.agent.geometry import bitboard
 from candidate.agent.probe import ProbePolicy
 from candidate.agent.runtime import TurnView
+from candidate.offline import match
 from candidate.examples.basic_state_machine import BasicStateMachine
 from candidate.examples.random_state_machine import RandomStateMachine
 from territorygame.api.agent_controller import AgentController
@@ -49,12 +54,7 @@ from territorygame.api.direction import Direction as FrameworkDirection
 from territorygame.api.grid_position import GridPosition
 from territorygame.api.occupant_view import OccupantView
 from territorygame.controller.enemy_state_machine import EnemyStateMachine
-from territorygame.domain.game_config import GameConfig
-from territorygame.engine.game_engine import GameEngine
-from territorygame.engine.game_observer import GameObserver
 from territorygame.helpers.movement_utils import find_cell, is_valid_move, manhattan_distance, next_position
-
-CLOSE_RESPAWNS = [(25, 18), (25, 31)]  # (y, x) per player
 
 
 # ---- opponents ----------------------------------------------------------
@@ -134,27 +134,6 @@ class _Spy:
 
     def debug_state(self) -> str:
         return self.inner.debug_state()
-
-
-class _Collector(GameObserver):
-    def __init__(self) -> None:
-        self.snapshots: "queue.Queue" = queue.Queue()
-        self.latest = None  # the state my next turn faces: observers run in the engine thread, before the next turn
-
-    def on_game_state_changed(self, snapshot) -> None:
-        self.latest = snapshot
-        self.snapshots.put(snapshot)
-
-
-class _Candidate(AgentController):
-    def __init__(self, agent: Controller) -> None:
-        self.agent = agent
-
-    def take_turn(self, game) -> None:
-        self.agent.take_turn(game)
-
-    def get_debug_state(self):
-        return self.agent.debug_state()
 
 
 def _score_belief(belief, snapshot, player: int) -> dict:
@@ -257,7 +236,7 @@ def run_check(
     strategy: str = "probe",
 ) -> CheckResult:
     diagnostics = Diagnostics(echo=echo, log_dir=log_dir)
-    collector = _Collector()
+    collector = match.Watch(keep=True)          # its `latest` is the board my next turn faces (see _Spy)
     if strategy == "q":
         from candidate.agent.q.strategy import QStrategy
 
@@ -267,23 +246,11 @@ def run_check(
     else:
         raise ValueError(f"unknown strategy {strategy!r}")
     spy = _Spy(played, collector, player)
-    candidate = _Candidate(Controller(spy, diagnostics))
+    candidate = match.AgentAdapter(Controller(spy, diagnostics))
     controllers = [OPPONENTS[opponent](), OPPONENTS[opponent]()]
     controllers[player] = candidate
 
-    overrides = {}
-    if close:
-        overrides["respawn_positions"] = [GridPosition(x, y) for y, x in CLOSE_RESPAWNS]
-    config = dataclasses.replace(
-        GameConfig.load_default(), turns_per_player=turns, autoplay_turn_delay_millis=0, **overrides
-    )
-    engine = GameEngine(config, controllers)
-    engine.add_observer(collector)
-    engine.reset(controllers)
-    snapshots = [collector.snapshots.get(timeout=10)]
-    engine.start()
-    while not snapshots[-1].game_over:
-        snapshots.append(collector.snapshots.get(timeout=120))
+    snapshots = match.play(controllers, turns, match.CLOSE if close else match.FAR, watch=collector).snapshots
 
     result = CheckResult(diagnostics, strategy=played)
     _score(result, spy, snapshots, player, turns)

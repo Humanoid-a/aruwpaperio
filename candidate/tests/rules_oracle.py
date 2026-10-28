@@ -17,7 +17,7 @@ from candidate.agent.config import BOARD_HEIGHT, BOARD_WIDTH
 from candidate.agent.data.cells import FREE, MY_TERRITORY, MY_TRAIL, OPP_TERRITORY, OPP_TRAIL
 from candidate.agent.data.types import Direction, MoveResult, Side
 from candidate.agent.data.world import WorldState
-from candidate.agent.geometry.grid import DX, DY, flat, in_bounds, manhattan, to_yx
+from candidate.agent.geometry.grid import DX, DY, flat, to_yx
 from candidate.agent.rules.match import MatchRules
 from territorygame.api.direction import Direction as RealDirection
 from territorygame.api.grid_position import GridPosition

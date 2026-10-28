@@ -5,7 +5,6 @@ import pytest
 
 from candidate.agent.config import BOARD_HEIGHT, BOARD_WIDTH, WINDOW_SIZE
 from candidate.agent.data.cells import FREE, MY_TERRITORY, MY_TRAIL, OPP_TERRITORY, OPP_TRAIL
-from candidate.agent.data.observation import Observation
 from candidate.agent.data.types import MoveResult
 from candidate.agent.geometry.grid import flat
 from candidate.tests.builders import make_observation, square, window_bounds

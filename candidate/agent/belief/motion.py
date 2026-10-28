@@ -44,6 +44,8 @@ class SuccessorBatch:
     last_dir: np.ndarray     # (n,) -1 if not exposed
     opp_count: np.ndarray    # (n,) its territory size
     weight: np.ndarray       # (n,) the parent's probability mass
+    opp_land_id: np.ndarray  # (n,) its land, an id into the situation's opp_diffs (against opp_base)
+    my_land_id: np.ndarray   # (n,) my land under this hypothesis, an id into my_diffs (against my_base)
     # the outcome of each move
     dest: np.ndarray         # (n, 4) cell stepped onto (may be off the board where not legal)
     legal: np.ndarray        # (n, 4) on the board and not onto my agent
@@ -57,6 +59,7 @@ class SuccessorBatch:
     my_trail_bb: np.ndarray  # (50,) my trail at that moment
     opp_land_bb: np.ndarray  # (50,) the cells memory believes the opponent owns (shared by all hypotheses)
     obs: Observation         # this turn's observation
+    situation: object = None  # the belief's Situation (lands as bases plus difference tables), for per-hypothesis lands
 
     def select(self, rows: np.ndarray) -> "SuccessorBatch":
         """The batch for only the hypotheses at `rows`. Used to score just the parents that still have a
@@ -84,7 +87,7 @@ class SuccessorBatch:
 
 # the fields that have one entry (or four) per hypothesis; the rest describe the shared situation
 _PER_HYPOTHESIS = (
-    "pos", "trail_bb", "trail_len", "last_dir", "opp_count", "weight",
+    "pos", "trail_bb", "trail_len", "last_dir", "opp_count", "weight", "opp_land_id", "my_land_id",
     "dest", "legal", "self_trail", "kills_me", "enters_own", "captures", "capture_gain",
 )
 
@@ -96,6 +99,9 @@ _FIELD_NOTES = {
     "last_dir": "direction of its last move, -1 if not exposed",
     "opp_count": "its territory size",
     "weight": "the hypothesis' probability mass",
+    "opp_land_id": "its land: an id into the situation's difference table",
+    "my_land_id": "my land under this hypothesis: an id into the situation's table",
+    "situation": "the belief's Situation (bases and difference tables of both lands)",
     "dest": "cell each move steps onto",
     "legal": "move is on the board and not onto my agent",
     "self_trail": "move steps on its own trail (it dies)",

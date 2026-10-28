@@ -140,6 +140,23 @@ def test_flood_batch_matches_single():
         assert np.array_equal(batch[i], flood(bitboard.from_mask(seeds[i]), bitboard.from_mask(passables[i])))
 
 
+def test_flood_batch_whose_boards_finish_at_different_rounds_and_a_shared_passable():
+    snake = set()                                      # needs many rounds; the open board needs two
+    for y in range(0, 40, 2):
+        snake |= {(y, x) for x in range(BOARD_WIDTH)}  # full-width rows: runs that reach bit 49
+        snake.add((y + 1, BOARD_WIDTH - 1 if (y // 2) % 2 == 0 else 0))
+    corridor, open_board = bb_of(snake), BOARD.copy()
+    seeds = np.stack([bb_of([(0, 0)]), bb_of([(25, 25)]), bitboard.empty(), bb_of([(38, 0)])])
+    passables = np.stack([corridor, open_board, open_board, corridor])
+    got = flood(seeds, passables)
+    for i in range(4):
+        expected = ref_flood(bitboard.to_mask(seeds[i]), bitboard.to_mask(passables[i]))
+        assert np.array_equal(bitboard.to_mask(got[i]), expected)
+    shared = flood(seeds, corridor)                    # one passable board for the whole batch
+    assert np.array_equal(shared[0], got[0]) and np.array_equal(shared[3], got[3])
+    assert bitboard.is_valid(got[0]) and not (got[0] & ~bitboard.ROW_MASK).any()
+
+
 # ---- holes --------------------------------------------------------------
 
 

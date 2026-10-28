@@ -1,0 +1,89 @@
+{
+ "player": {
+  "model": "E:\\Files\\PythonProject\\python-state-machine-starter\\candidate\\q_training\\online\\online15\\epoch_004\\weights.pt",
+  "k_model": null,
+  "games": 16,
+  "wins": 12,
+  "mean_diff": 415.5,
+  "se": 148.76337474884963,
+  "deaths": 3,
+  "opponents": {
+   "enemy_copy": {
+    "games": 4,
+    "wins": 3,
+    "mean_diff": 499.0
+   },
+   "noisy": {
+    "games": 12,
+    "wins": 9,
+    "mean_diff": 387.6666666666667
+   }
+  },
+  "diffs": [
+   -160.0,
+   813.0,
+   787.0,
+   556.0,
+   764.0,
+   961.0,
+   228.0,
+   922.0,
+   997.0,
+   -134.0,
+   -784.0,
+   644.0,
+   538.0,
+   738.0,
+   647.0,
+   -869.0
+  ]
+ },
+ "learner": {
+  "model": "E:\\Files\\PythonProject\\python-state-machine-starter\\candidate\\q_training\\online\\online15\\epoch_025\\weights.pt",
+  "k_model": null,
+  "games": 16,
+  "wins": 14,
+  "mean_diff": 347.125,
+  "se": 72.16704436005861,
+  "deaths": 5,
+  "opponents": {
+   "enemy_copy": {
+    "games": 4,
+    "wins": 4,
+    "mean_diff": 503.5
+   },
+   "noisy": {
+    "games": 12,
+    "wins": 10,
+    "mean_diff": 295.0
+   }
+  },
+  "diffs": [
+   496.0,
+   402.0,
+   435.0,
+   681.0,
+   319.0,
+   -401.0,
+   489.0,
+   260.0,
+   504.0,
+   603.0,
+   419.0,
+   -249.0,
+   573.0,
+   293.0,
+   443.0,
+   287.0
+  ]
+ },
+ "accepted": false,
+ "margin": 0.0,
+ "z": 1.0,
+ "paired": {
+  "mean": -68.375,
+  "se": 180.641169979788,
+  "better": 7,
+  "games": 16
+ }
+}
