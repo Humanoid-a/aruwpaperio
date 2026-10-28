@@ -1,2 +1,4 @@
 pygame>=2.5,<3
 pytest>=8,<9
+pytorch
+numpy
